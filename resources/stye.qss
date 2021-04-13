@@ -1,0 +1,22 @@
+/*
+QLabel
+{
+	background: #FFCC00;
+	color: #000000;
+}
+*/
+
+MyWidget
+{
+	background: #FF0000;
+}
+
+BeatSheetGridWidget
+{
+	background: #FF0000;
+}
+
+BeatSheetItemWidget
+{
+	background: #FF0000;
+}
