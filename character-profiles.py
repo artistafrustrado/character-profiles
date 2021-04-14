@@ -26,6 +26,10 @@ from exportbs import *
 # ui->tableView->setModel(model);
 # ui->tableView->setColumnHidden(5, true);
 
+# https://linuxhint.com/use-pyqt-qtablewidget/
+# https://gist.github.com/345161974/dd5003ed9b706adc557ee12e6a344c6e
+
+
 class TableModel(QtCore.QAbstractTableModel):
     def __init__(self, data):
         super(TableModel, self).__init__()
@@ -46,6 +50,14 @@ class TableModel(QtCore.QAbstractTableModel):
         # The following takes the first sub-list, and returns
         # the length (only works if all rows are an equal length)
         return len(self._data[0])
+
+    def setTableData(self):
+        for column, key in enumerate(self._data):
+            for row, item in enumerate(self._data[key]):
+                newitem = QTableWidgetItem(item)
+                self.setItem(row, column, newitem)
+
+
 
 class CharacterListWidget(QWidget):
     _parent = ''
@@ -81,15 +93,33 @@ class CharacterListWidget(QWidget):
         with open('save/sample.char') as f:
             read_data = f.read()
             data = json.loads(read_data)
-            print(data)
+#            print(data)
             f.close()
 
         self.model = TableModel(data)
 #        self.table.setModel(self.model)
+#        self.model.setTableData()
+#        self.table.setModel(self.model)
+        self.table.setSortingEnabled(True)
+        self.table.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.table.clicked.connect(self.selectRow)
+        self.table.clicked.connect(self.showSelection)
 
         self.table.setColumnHidden(4, True)
 
         self.setLayout(vbox)
+
+    def selectRow(self, index):
+        print("current row is %d", index.row())
+
+    def showSelection(self, item):
+        cellContent = item.data()
+        print(cellContent)  # test
+        sf = "You clicked on {}".format(cellContent)
+        # display in title bar for convenience
+        self.setWindowTitle(sf)
+
 
     def load(self):
         filename, filter = QFileDialog.getOpenFileName(self, 'Open file', '~/')
