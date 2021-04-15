@@ -18,5 +18,15 @@ BeatSheetGridWidget
 
 BeatSheetItemWidget
 {
-	background: #FF0000;
+		background: #FF0000;
+}
+
+QLabel#CharacterList
+{
+	background-color: #000000;
+	color: #FFFFFF;
+	font-weight: bold;
+	text-align: center;
+	padding: 10px;
+	font-size: 35px;
 }
