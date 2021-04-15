@@ -16,6 +16,7 @@ class CharacterWidget(QWidget):
     def __init__(self):
         super().__init__()
         self._setupUI()
+        self._data = []
 
     def _setupUI(self):
         hbox = QHBoxLayout()
@@ -161,10 +162,11 @@ class CharacterListWidget(QWidget):
 
         # CREATE THE TABLE
         self.table = QTableView(self)  # SELECTING THE VIEW
-        self.table.setGeometry(0, 0, 575, 575)
+        self.table.setGeometry(0, 0, 1200, 900)
         self.model = QStandardItemModel(self)  # SELECTING THE MODEL - FRAMEWORK THAT HANDLES QUERIES AND EDITS
         self.table.setModel(self.model)  # SETTING THE MODEL
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.load()
         self.populate()
 
         self.table.doubleClicked.connect(self.on_click)
@@ -186,25 +188,50 @@ class CharacterListWidget(QWidget):
         print(
             'Row {}, Column {} clicked - value: {}\nColumn 1 contents: {}'.format(row, column, cell_value, index_value))
 
+    def load(self):
+#        filename, filter = QFileDialog.getOpenFileName(self, 'Open file', '~/')
+        filename = "save/sample.char"
+        with open(filename, 'r') as json_data:
+            json_data = json.load(json_data)
+            print(json_data)
+            print('*'*80)
+            self._data = json_data
+
+
     def populate(self):
         # GENERATE A 4x10 GRID OF RANDOM NUMBERS.
         # VALUES WILL CONTAIN A LIST OF INT.
-        # MODEL ONLY ACCEPTS STRINGS - MUST CONVERT.
+        # MODEL ONLY ACCEPTS STRINGS - MUST CONVERT
         values = []
-        for i in range(10):
-            sub_values = []
-            for i in range(4):
-                value = random.randrange(1, 100)
-                sub_values.append(value)
-            values.append(sub_values)
+            
+        header= ['name','age','gender','function','hash']
+        self.model.setHorizontalHeaderLabels(header)
 
-        for value in values:
+        for item in self._data:
+            print(item)
+            line = [item['name'],item['age'],item['gender'],item['function'],item['hash']]
+
             row = []
-            for item in value:
-                cell = QStandardItem(str(item))
+            for val in line:
+                cell = QStandardItem(str(val))
                 row.append(cell)
             self.model.appendRow(row)
 
+
+#        for i in range(10):
+#            sub_values = []
+#            for i in range(4):
+#                value = random.randrange(1, 100)
+#                sub_values.append(value)
+#            values.append(sub_values)
+#
+#        for value in values:
+#            row = []
+#            for item in value:
+#                cell = QStandardItem(str(item))
+#                row.append(cell)
+#            self.model.appendRow(row)
+#
         self.show()
 
 
@@ -302,7 +329,7 @@ class AppMainWindow(QMainWindow):
         toolbar.addAction(exportHtmlAction)
         toolbar.addAction(exportOdtAction)
         
-        self.setWindowTitle('Save the Cat Beat Sheet') 
+        self.setWindowTitle('Character Sheets') 
 
         MainAppIcon = QIcon(appIcon)
         self.setWindowIcon(MainAppIcon)
@@ -315,17 +342,6 @@ class AppMainWindow(QMainWindow):
     def _getData(self):
         items = self._grid.getItems()
         movie_name = self._movie.getName()
-        movie_theme = self._movie.getTheme()
-        movie_genre = self._movie.getGenre()
-        movie_logline = self._grid.getLogLine()
-        author_name = self._author.getName()
-        author_email = self._author.getEmail()
-        author_institute = self._author.getInstitute()
-        
-        plot_text = self._plot.getPlot()
-        escaleta_text = self._escaleta.getEscaleta()
-        argumento_text = self._argumento.getArgumento()
-        synopsis_text = self._synopsis.getSynopsis()
 
         movie = {
                 'movie': {'name': movie_name, 'genre': movie_genre, 'theme': movie_theme,'logline': movie_logline},
@@ -341,25 +357,9 @@ class AppMainWindow(QMainWindow):
     def setName(self, name):
         self._movie.setName(name)
 
-    def setGenre(self, name):
-        self._movie.setGenre(name)
-
-    def setTheme(self, name):
-        self._movie.setTheme(name)
-
     def loadData(self, data):
             print(data)
             self.setName(data['movie']['name'])
-            self.setGenre(data['movie']['genre'])
-            self.setTheme(data['movie']['theme'])
-            self._grid.setLogLine(data['movie']['logline'])
-            self._author.setName(data['author']['name'])
-            self._author.setEmail(data['author']['email'])
-            self._author.setInstitute(data['author']['institute'])
-            self._synopsis.setSynopsis(data['synopsis'])
-            self._plot.setPlot(data['plot'])
-            self._argumento.setArgumento(data['argumento'])
-            self._escaleta.setEscaleta(data['escaleta'])
 
     def load(self):
         pass
