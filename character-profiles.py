@@ -150,6 +150,7 @@ class CharacterWidget(QWidget):
         self.setLayout(vbox)
 
 
+
 class CharacterListWidget(QWidget):
     def __init__(self):
         super().__init__()
@@ -217,24 +218,18 @@ class CharacterListWidget(QWidget):
                 row.append(cell)
             self.model.appendRow(row)
 
-
-#        for i in range(10):
-#            sub_values = []
-#            for i in range(4):
-#                value = random.randrange(1, 100)
-#                sub_values.append(value)
-#            values.append(sub_values)
-#
-#        for value in values:
-#            row = []
-#            for item in value:
-#                cell = QStandardItem(str(item))
-#                row.append(cell)
-#            self.model.appendRow(row)
-#
         self.show()
 
-
+    def addDock(self):
+      self.dockItems = QDockWidget("Dockable", self)
+      self.listWidget = QListWidget()
+      self.listWidget.addItem("item1")
+      self.listWidget.addItem("item2")
+      self.listWidget.addItem("item3")
+		
+      self.dockItems.setWidget(self.listWidget)
+      self.dockItems.setFloating(False)
+      self.addDockWidget(Qt.RightDockWidgetArea, self.dockItems)
 
 class AppMainWindow(QMainWindow):
     
